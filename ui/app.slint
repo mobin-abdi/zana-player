@@ -1,0 +1,108 @@
+import { Theme } from "theme.slint";
+import { Sidebar } from "components/sidebar.slint";
+import { HomePage } from "pages/home.slint";
+import { LibraryPage } from "pages/library.slint";
+import { NowPlayingPage } from "pages/now_playing.slint";
+import { PlayerBar } from "components/player_bar.slint";
+
+export component MainWindow inherits Window {
+    width: 1100px;
+    height: 800px;
+
+    in property <[string]> song_titles;
+    in property <[string]> song_artists;
+    in property <[int]> song_ids;
+
+    in-out property <string> search_query;
+    in-out property <int> current_page: 0;
+
+    in-out property <string> current_song_title: "Nothing playing";
+    in-out property <string> current_song_artist: "Unknown Artist";
+    in-out property <string> current_song_album: "Unknown Album";
+    in-out property <int> current_song_id: -1;
+
+    in-out property <bool> is_paused: true;
+    in-out property <float> current_song_duration: 0.0;
+    in-out property <float> current_song_position: 0.0;
+
+    callback song_selected(int);
+    callback search_changed(string);
+    callback player_bar_clicked();
+    callback play_pause_clicked();
+    callback next_clicked();
+    callback previous_clicked();
+    callback seek_requested(float);
+
+    background: Theme.background;
+
+    Sidebar {
+        x: 0;
+        y: 0;
+        height: parent.height;
+
+        home_clicked => {
+            root.current_page = 0;
+        }
+
+        library_clicked => {
+            root.current_page = 1;
+        }
+    }
+
+    if current_page == 0 : HomePage {
+        x: 220px;
+        y: 0;
+        width: parent.width - 220px;
+        height: parent.height - 100px;
+    }
+
+    if current_page == 1 : LibraryPage {
+        x: 220px;
+        y: 0;
+        width: parent.width - 220px;
+        height: parent.height - 100px;
+
+        song_titles: root.song_titles;
+        song_artists: root.song_artists;
+        song_ids: root.song_ids;
+
+        search_query <=> root.search_query;
+
+        song_clicked(id) => {
+            root.song_selected(id);
+        }
+
+        search_changed(query) => {
+            root.search_changed(query);
+        }
+    }
+
+    if current_page == 2 : NowPlayingPage {
+        x: 220px;
+        y: 0;
+        width: parent.width - 220px;
+        height: parent.height - 100px;
+
+        song_title: root.current_song_title;
+        song_artist: root.current_song_artist;
+        song_album: root.current_song_album;
+    }
+
+    PlayerBar {
+        x: 220px;
+        y: parent.height - 100px;
+        width: parent.width - 220px;
+        height: 100px; // اضافه کردن ارتفاع صریح
+
+        song_title: root.current_song_title;
+        is_paused: root.is_paused;
+        duration: root.current_song_duration;
+        position <=> root.current_song_position;
+
+        clicked => { root.player_bar_clicked(); }
+        play_pause_clicked => { root.play_pause_clicked(); }
+        next_clicked => { root.next_clicked(); }
+        previous_clicked => { root.previous_clicked(); }
+        seek_requested(position) => { root.seek_requested(position); }
+    }
+}

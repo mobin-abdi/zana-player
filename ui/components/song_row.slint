@@ -1,0 +1,29 @@
+import { Theme } from "../theme.slint";
+
+export component SongRow inherits Rectangle {
+    in property <string> title;
+    in property <string> artist;
+    in property <int> id;
+
+    callback clicked();
+
+    height: 64px;
+
+    background: touch_area.has-hover
+        ? Theme.surface_hover
+        : Theme.surface;
+
+    touch_area := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    Text {
+        text: title;
+        color: Theme.text_primary;
+        font-size: 16px;
+        x: 20px;
+        y: 20px;
+    }
+}

@@ -1,0 +1,72 @@
+import { Theme } from "../theme.slint";
+
+export component Sidebar inherits Rectangle {
+    callback home_clicked();
+    callback library_clicked();
+
+    width: 220px;
+    background: Theme.surface;
+
+    Text {
+        text: "ZanaPlayer";
+        color: Theme.text_primary;
+        font-size: 22px;
+        font-weight: 700;
+        x: 24px;
+        y: 24px;
+    }
+
+    TouchArea {
+        x: 12px;
+        y: 90px;
+        width: 196px;
+        height: 44px;
+
+        clicked => {
+            root.home_clicked();
+        }
+
+        Rectangle {
+            background: parent.has-hover
+                ? Theme.surface_hover
+                : Theme.surface;
+
+            border-radius: 8px;
+
+            Text {
+                text: "Home";
+                color: Theme.text_primary;
+                font-size: 15px;
+                x: 16px;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    TouchArea {
+        x: 12px;
+        y: 142px;
+        width: 196px;
+        height: 44px;
+    
+        clicked => {
+            root.library_clicked();
+        }
+    
+        Rectangle {
+            background: parent.has-hover
+                ? Theme.surface_hover
+                : Theme.surface;
+    
+            border-radius: 8px;
+    
+            Text {
+                text: "Library";
+                color: Theme.text_primary;
+                font-size: 15px;
+                x: 16px;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

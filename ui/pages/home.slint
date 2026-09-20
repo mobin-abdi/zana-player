@@ -1,0 +1,22 @@
+import { Theme } from "../theme.slint";
+
+export component HomePage inherits Rectangle {
+    background: Theme.background;
+
+    Text {
+        text: "Welcome to ZanaPlayer";
+        color: Theme.text_primary;
+        font-size: 28px;
+        font-weight: 700;
+        x: 32px;
+        y: 32px;
+    }
+
+    Text {
+        text: "Your music, your way.";
+        color: Theme.text_secondary;
+        font-size: 15px;
+        x: 34px;
+        y: 76px;
+    }
+}

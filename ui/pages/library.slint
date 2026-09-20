@@ -1,0 +1,55 @@
+import { Theme } from "../theme.slint";
+import { SongRow } from "../components/song_row.slint";
+import { ListView } from "std-widgets.slint";
+import { SearchBar } from "../components/search_bar.slint";
+
+export component LibraryPage inherits Rectangle {
+    callback song_clicked(int);
+    callback search_changed(string);
+
+    in property <[string]> song_titles;
+    in property <[string]> song_artists;
+    in property <[int]> song_ids;
+
+    in-out property <string> search_query;
+
+    background: Theme.background;
+
+    Text {
+        text: "Your Library";
+        color: Theme.text_primary;
+        font-size: 28px;
+        font-weight: 700;
+        x: 32px;
+        y: 32px;
+    }
+
+    SearchBar {
+        x: 32px;
+        y: 76px;
+        width: parent.width - 64px;
+
+        query <=> root.search_query;
+
+        query_changed(query) => {
+            root.search_changed(query);
+        }
+    }
+
+    ListView {
+        x: 32px;
+        y: 136px;
+        width: parent.width - 64px;
+        height: parent.height - 146px;
+
+        for title[index] in song_titles : SongRow {
+            title: title;
+            artist: song_artists[index];
+            id: song_ids[index];
+
+            clicked => {
+                root.song_clicked(self.id);
+            }
+        }
+    }
+}

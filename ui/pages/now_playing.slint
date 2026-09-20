@@ -1,0 +1,75 @@
+import { Theme } from "../theme.slint";
+
+export component NowPlayingPage inherits Rectangle {
+    in property <string> song_title: "Nothing playing";
+    in property <string> song_artist: "Unknown Artist";
+    in property <string> song_album: "Unknown Album";
+
+    background: Theme.background;
+
+    Text {
+        text: "Now Playing";
+        color: Theme.text_primary;
+        font-size: 28px;
+        font-weight: 700;
+        x: 32px;
+        y: 32px;
+    }
+
+    Rectangle {
+        x: 32px;
+        y: 100px;
+        width: 280px;
+        height: 280px;
+        border-radius: 12px;
+        background: Theme.surface;
+
+        Text {
+            text: "♪";
+            color: Theme.text_muted;
+            font-size: 80px;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Song title
+    Text {
+        text: song_title;
+        color: Theme.text_primary;
+        font-size: 24px;
+        font-weight: 700;
+
+        x: 340px;
+        y: 120px;
+        width: parent.width - 380px;
+
+        overflow: elide;
+    }
+
+    // Artist
+    Text {
+        text: song_artist;
+        color: Theme.text_secondary;
+        font-size: 17px;
+
+        x: 340px;
+        y: 165px;
+        width: parent.width - 380px;
+
+        overflow: elide;
+    }
+
+    // Album
+    Text {
+        text: song_album;
+        color: Theme.text_muted;
+        font-size: 15px;
+
+        x: 340px;
+        y: 200px;
+        width: parent.width - 380px;
+
+        overflow: elide;
+    }
+}

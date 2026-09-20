@@ -1,0 +1,198 @@
+import { Theme } from "../theme.slint";
+
+export component PlayerBar inherits Rectangle {
+    in property <string> song_title: "Nothing playing";
+    in property <bool> is_paused: true;
+
+    in property <float> duration: 0.0;
+    in-out property <float> position: 0.0;
+
+    callback clicked();
+    callback play_pause_clicked();
+    callback next_clicked();
+    callback previous_clicked();
+    callback seek_requested(float);
+
+    pure function format_time(seconds: float) -> string {
+        let total_secs = Math.floor(Math.max(0.0, seconds));
+        let mins = Math.floor(total_secs / 60);
+        let secs = total_secs - mins * 60;
+
+        let mins_str = mins < 10 ? "0" + mins : "" + mins;
+        let secs_str = secs < 10 ? "0" + secs : "" + secs;
+
+        return mins_str + ":" + secs_str;
+    }
+
+    height: 80px;
+    background: Theme.surface;
+
+    // ─────────────────────────
+    // Timeline
+    // ─────────────────────────
+
+    Rectangle {
+        x: 20px;
+        y: 8px;
+        width: parent.width - 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: Theme.border;
+
+        Rectangle {
+            x: 0px;
+            y: 0px;
+
+            width: root.duration > 0
+                ? parent.width * Math.min(
+                    1.0,
+                    Math.max(0.0, root.position / root.duration)
+                  )
+                : 0px;
+
+            height: parent.height;
+            border-radius: 2px;
+            background: Theme.accent;
+        }
+
+        TouchArea {
+            x: 0px;
+            y: -8px;
+            width: parent.width;
+            height: 20px;
+
+            clicked => {
+                if (root.duration > 0) {
+                    let ratio = self.mouse-x / self.width;
+
+                    let clamped_ratio = Math.max(
+                        0.0,
+                        Math.min(1.0, ratio)
+                    );
+
+                    let new_position =
+                        clamped_ratio * root.duration;
+
+                    root.position = new_position;
+                    root.seek_requested(new_position);
+                }
+            }
+        }
+    }
+
+    // زمان فعلی
+    Text {
+        x: 20px;
+        y: 18px;
+        text: root.format_time(root.position);
+        color: Theme.text_muted;
+        font-size: 11px;
+    }
+
+    // مدت آهنگ
+    Text {
+        x: parent.width - 60px;
+        y: 18px;
+        width: 40px;
+
+        text: root.format_time(root.duration);
+        color: Theme.text_muted;
+        font-size: 11px;
+        horizontal-alignment: right;
+    }
+
+    // ─────────────────────────
+    // Song title
+    // ─────────────────────────
+
+    Text {
+        x: 20px;
+        y: 42px;
+        width: 180px;
+
+        text: root.song_title;
+        color: Theme.text_primary;
+        font-size: 13px;
+        font-weight: 600;
+
+        overflow: elide;
+    }
+
+    // ─────────────────────────
+    // Controls
+    // ─────────────────────────
+
+    TouchArea {
+        x: parent.width / 2 - 70px;
+        y: 42px;
+        width: 30px;
+        height: 30px;
+
+        clicked => {
+            root.previous_clicked();
+        }
+
+        Text {
+            text: "⏮";
+            color: parent.has-hover
+                ? Theme.text_primary
+                : Theme.text_secondary;
+
+            font-size: 16px;
+
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    TouchArea {
+        x: parent.width / 2 - 18px;
+        y: 40px;
+        width: 34px;
+        height: 34px;
+
+        clicked => {
+            root.play_pause_clicked();
+        }
+
+        Rectangle {
+            width: 34px;
+            height: 34px;
+            border-radius: 17px;
+            background: Theme.accent;
+
+            Text {
+                text: root.is_paused ? "▶" : "⏸";
+
+                color: Theme.text_primary;
+                font-size: 14px;
+
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    TouchArea {
+        x: parent.width / 2 + 40px;
+        y: 42px;
+        width: 30px;
+        height: 30px;
+
+        clicked => {
+            root.next_clicked();
+        }
+
+        Text {
+            text: "⏭";
+            color: parent.has-hover
+                ? Theme.text_primary
+                : Theme.text_secondary;
+
+            font-size: 16px;
+
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}

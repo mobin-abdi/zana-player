@@ -1,0 +1,29 @@
+import { Theme } from "../theme.slint";
+
+export component SearchBar inherits Rectangle {
+    in-out property <string> query;
+
+    callback query_changed(string);
+
+    height: 44px;
+    background: Theme.surface;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: Theme.border;
+
+    TextInput {
+        text <=> root.query;
+
+        edited => {
+            root.query_changed(root.query);
+        }
+
+        color: Theme.text_primary;
+        font-size: 14px;
+
+        x: 16px;
+        y: 0px;
+        width: parent.width - 32px;
+        height: parent.height;
+    }
+}
